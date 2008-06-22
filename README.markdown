@@ -35,7 +35,7 @@ you no longer need to run the script with `--install`.
 RUNNING
 -------
 
-After things-exporter is installed on the remote server, simply use `ruby things-export.rb`
+After things-export is installed on the remote server, simply use `ruby things-export.rb`
 to update the remote just the index file. If there is nothing to update, no connection will
 be made. You can force an update with -f. Ideally, you can run this script from a cron-job 
 to update your Things todo list every now and then.

@@ -44,7 +44,8 @@ doc.search('object[@type="TODO"]').each do |todo|
   if which == :done
     obj.completed = todo.search('attribute[@name="datecompleted"]').text.to_f
   elsif t=todo.search('attribute[@name="datedue"]').first
-    obj.duedate = t.inner_html.to_f
+    time = Time.at(t.inner_html.to_f).utc
+    obj.duedate = Time.utc(Time.now.year, time.month, time.day, time.hour, time.min, time.sec)
   end
   
   if t=todo.search('relationship[@name="tags"][@idrefs]').first
@@ -87,7 +88,11 @@ mab.html do
           span(:class => 'title') { todo.title }
           span(:class => 'rightcap')
           span(:class => 'duedate') do 
-            (todo.duedate / 86400000).to_i.to_s + " days left"
+            if (n=((todo.duedate - Time.now.utc) / 86400).to_i) > 14
+              todo.duedate.strftime("%b %d")
+            else
+              n.to_s + " days left"
+            end
           end if todo.duedate 
           span(:class => 'tags') { taglist(mab, todo.tags) }
         end
@@ -100,7 +105,7 @@ mab.html do
         row = !row
         li(:class => (row ? 'even' : 'odd')) do
           span(:class => 'leftcap')
-          span(:class => 'completed') { Time.at(todo.completed).strftime("%b %d, %Y") }
+          span(:class => 'completed') { Time.at(todo.completed).utc.strftime("%b %d, %Y") }
           span(:class => 'title') { todo.title }
           span(:class => 'rightcap')
           span(:class => 'tags') { taglist(mab, todo.tags) }
